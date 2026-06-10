@@ -2,10 +2,12 @@ node_modules
 *.log
 *.aes
 
-# Playwright (QA automation)
+# Playwright / Allure (QA automation)
 /test-results/
 /playwright-report/
 /blob-report/
+/allure-results/
+/allure-report/
 cypress/downloads
 cypress/screenshots
 cypress/videos

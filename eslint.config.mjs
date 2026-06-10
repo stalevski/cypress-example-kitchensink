@@ -9,7 +9,14 @@ import pluginYml from 'eslint-plugin-yml'
 import pluginHtml from '@html-eslint/eslint-plugin'
 
 export default defineConfig([
-  globalIgnores(['app/assets/js/{vendor,todo}/']),
+  globalIgnores([
+    'app/assets/js/{vendor,todo}/',
+    // Generated QA automation output (Playwright + Allure); never linted.
+    'allure-results/**',
+    'allure-report/**',
+    'playwright-report/**',
+    'test-results/**',
+  ]),
   {
     files: ['**/*.{,m}js'],
     extends: [
