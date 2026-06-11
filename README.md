@@ -1,3 +1,107 @@
+# ToDo App QA Automation (Playwright + TypeScript)
+
+Automated end-to-end tests for the **ToDo application** that ships with
+this fork of
+[`cypress-io/cypress-example-kitchensink`](https://github.com/cypress-io/cypress-example-kitchensink),
+served at `http://localhost:8080/todo`.
+
+Built with Playwright, TypeScript, a Page Object Model, and Allure reporting.
+While writing the tests I also found a real defect in the application
+(see [Bugs found](#bugs-found)).
+
+> The app under test is this repository's own `app/` folder, started with
+> `npm start`. The original project README is kept at the bottom of this file.
+
+---
+
+## Project structure
+
+```
+src/                          # Playwright Page Object Model
+├─ pages/
+│  ├─ base.page.ts
+│  └─ todo.page.ts
+├─ fixtures/
+│  └─ todo.fixtures.ts
+└─ data/
+   └─ todos.ts
+tests/todo/                   # one spec per feature area
+├─ default-list.spec.ts
+├─ create.spec.ts
+├─ complete.spec.ts
+├─ edit.spec.ts
+├─ delete.spec.ts
+└─ filter.spec.ts
+docs/
+├─ test-plan.feature          # Gherkin test plan
+└─ bugs/
+   └─ BUG-1-duplicate-todo-ids.md
+playwright.config.ts
+tsconfig.json
+Dockerfile
+```
+
+## Getting started
+
+Requires Node.js 18+ (Java 8+ only if you want to open the Allure HTML report).
+
+```bash
+npm install               # install dependencies
+npx playwright install    # install browsers
+```
+
+## Running the tests
+
+Playwright starts the app itself (via the `webServer` config), so one command
+runs everything:
+
+```bash
+npm test                  # all browsers
+npm run test:headed       # headed mode
+npx playwright test --project=chromium   # single browser
+```
+
+## Allure reporting
+
+Each run writes results to `allure-results/`. To build and open the HTML report
+(needs Java):
+
+```bash
+npm run allure:generate
+npm run allure:open
+```
+
+## Test plan
+
+The Gherkin test plan is in
+[docs/test-plan.feature](docs/test-plan.feature). It covers creating,
+completing, editing, deleting and filtering todos. Each spec maps to a
+feature in that plan.
+
+## Bugs found
+
+### BUG-1: Editing or deleting the second default todo affects the first one
+
+The two default todos ("Pay electric bill" and "Walk the dog") get the same
+`data-id`, so any action on the second one is applied to the first. The likely
+cause: new todos take their id from the current time in milliseconds, and the
+two defaults are created in the same millisecond.
+
+- Full write-up: [docs/bugs/BUG-1-duplicate-todo-ids.md](docs/bugs/BUG-1-duplicate-todo-ids.md)
+
+## Docker
+
+One image contains both the app and the test suite:
+
+```bash
+docker build -t todo-qa-automation .
+docker run --rm todo-qa-automation
+```
+
+---
+
+<!-- The original project README is kept below for reference. -->
+
 # Kitchen Sink [![renovate-app badge][renovate-badge]][renovate-app] [![semantic-release][semantic-image] ][semantic-url]
 
 This is an example app used to showcase [Cypress.io](https://www.cypress.io/) End-to-End (E2E) testing. The application demonstrates the use of most [Cypress API commands](https://on.cypress.io/api). Additionally this example app is configured to run E2E tests in various CI platforms.
